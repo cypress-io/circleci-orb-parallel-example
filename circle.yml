@@ -12,7 +12,7 @@ workflows:
       - cypress/run:
           name: Run tests
           requires:
-            - cypress/install
+            - Install dependencies
           record: true # record results on Cypress Dashboard
           parallel: true # split all specs across machines
           parallelism: 4 # use 4 CircleCI machines to finish quickly
