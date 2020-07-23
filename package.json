@@ -6,6 +6,7 @@
   "scripts": {
     "test": "cypress run"
   },
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cypress-io/circleci-orb-parallel-example.git"
