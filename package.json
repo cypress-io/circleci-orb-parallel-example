@@ -4,7 +4,8 @@
   "description": "Using Cypress CircleCI Orb to quickly run tests in parallel",
   "main": "index.js",
   "scripts": {
-    "test": "cypress run"
+    "test": "cypress run",
+    "effective:config": "circleci config process circle.yml"
   },
   "private": true,
   "repository": {
