@@ -5,45 +5,7 @@ context('Network Requests', () => {
     cy.visit('https://example.cypress.io/commands/network-requests')
   })
 
-  // Manage AJAX / XHR requests in your app
-
-  it('cy.server() - control behavior of network requests and responses', () => {
-    // https://on.cypress.io/server
-
-    cy.server().should((server) => {
-      // the default options on server
-      // you can override any of these options
-      expect(server.delay).to.eq(0)
-      expect(server.method).to.eq('GET')
-      expect(server.status).to.eq(200)
-      expect(server.headers).to.be.null
-      expect(server.response).to.be.null
-      expect(server.onRequest).to.be.undefined
-      expect(server.onResponse).to.be.undefined
-      expect(server.onAbort).to.be.undefined
-
-      // These options control the server behavior
-      // affecting all requests
-
-      // pass false to disable existing route stubs
-      expect(server.enable).to.be.true
-      // forces requests that don't match your routes to 404
-      expect(server.force404).to.be.false
-      // whitelists requests from ever being logged or stubbed
-      expect(server.whitelist).to.be.a('function')
-    })
-
-    cy.server({
-      method: 'POST',
-      delay: 1000,
-      status: 422,
-      response: {},
-    })
-
-    // any route commands will now inherit the above options
-    // from the server. anything we pass specifically
-    // to route will override the defaults though.
-  })
+  // Manage HTTP requests in your app
 
   it('cy.request() - make an XHR request', () => {
     // https://on.cypress.io/request
@@ -60,12 +22,12 @@ context('Network Requests', () => {
 
   it('cy.request() - verify response using BDD syntax', () => {
     cy.request('https://jsonplaceholder.cypress.io/comments')
-    .then((response) => {
-      // https://on.cypress.io/assertions
-      expect(response).property('status').to.equal(200)
-      expect(response).property('body').to.have.property('length').and.be.oneOf([500, 501])
-      expect(response).to.include.keys('headers', 'duration')
-    })
+      .then((response) => {
+        // https://on.cypress.io/assertions
+        expect(response).property('status').to.equal(200)
+        expect(response).property('body').to.have.property('length').and.be.oneOf([500, 501])
+        expect(response).to.include.keys('headers', 'duration')
+      })
   })
 
   it('cy.request() with query parameters', () => {
@@ -78,14 +40,14 @@ context('Network Requests', () => {
         id: 3,
       },
     })
-    .its('body')
-    .should('be.an', 'array')
-    .and('have.length', 1)
-    .its('0') // yields first element of the array
-    .should('contain', {
-      postId: 1,
-      id: 3,
-    })
+      .its('body')
+      .should('be.an', 'array')
+      .and('have.length', 1)
+      .its('0') // yields first element of the array
+      .should('contain', {
+        postId: 1,
+        id: 3,
+      })
   })
 
   it('cy.request() - pass result to the second request', () => {
@@ -141,7 +103,7 @@ context('Network Requests', () => {
           title: 'Cypress Test Runner',
           body: 'Fast, easy and reliable testing for anything that runs in a browser.',
         })
-        .its('body').as('post') // save the new post from the response
+          .its('body').as('post') // save the new post from the response
       })
       .then(function () {
         // When this callback runs, both "cy.request" API commands have finished
@@ -151,42 +113,42 @@ context('Network Requests', () => {
       })
   })
 
-  it('cy.route() - route responses to matching requests', () => {
-    // https://on.cypress.io/route
+  it('cy.intercept() - route responses to matching requests', () => {
+    // https://on.cypress.io/intercept
 
     let message = 'whoa, this comment does not exist'
 
-    cy.server()
-
     // Listen to GET to comments/1
-    cy.route('GET', 'comments/*').as('getComment')
+    cy.intercept('GET', '**/comments/*').as('getComment')
 
     // we have code that gets a comment when
     // the button is clicked in scripts.js
     cy.get('.network-btn').click()
 
     // https://on.cypress.io/wait
-    cy.wait('@getComment').its('status').should('eq', 200)
+    cy.wait('@getComment').its('response.statusCode').should('be.oneOf', [200, 304])
 
     // Listen to POST to comments
-    cy.route('POST', '/comments').as('postComment')
+    cy.intercept('POST', '**/comments').as('postComment')
 
     // we have code that posts a comment when
     // the button is clicked in scripts.js
     cy.get('.network-post').click()
-    cy.wait('@postComment').should((xhr) => {
-      expect(xhr.requestBody).to.include('email')
-      expect(xhr.requestHeaders).to.have.property('Content-Type')
-      expect(xhr.responseBody).to.have.property('name', 'Using POST in cy.route()')
+    cy.wait('@postComment').should(({ request, response }) => {
+      expect(request.body).to.include('email')
+      expect(request.headers).to.have.property('content-type')
+      expect(response && response.body).to.have.property('name', 'Using POST in cy.intercept()')
     })
 
     // Stub a response to PUT comments/ ****
-    cy.route({
+    cy.intercept({
       method: 'PUT',
-      url: 'comments/*',
-      status: 404,
-      response: { error: message },
-      delay: 500,
+      url: '**/comments/*',
+    }, {
+      statusCode: 404,
+      body: { error: message },
+      headers: { 'access-control-allow-origin': '*' },
+      delayMs: 500,
     }).as('putComment')
 
     // we have code that puts a comment when
