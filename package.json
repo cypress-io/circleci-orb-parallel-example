@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/cypress-io/circleci-orb-parallel-example#readme",
   "devDependencies": {
-    "cypress": "7.0.1"
+    "cypress": "7.2.0"
   }
 }
