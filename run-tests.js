@@ -1,4 +1,4 @@
-const cypress = require('../cypress/cli')
+const cypress = require('cypress')
 
 const aberrations = []
 
