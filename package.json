@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "cypress run",
+    "cy:run": "node ./run-tests.js",
     "effective:config": "circleci config process circle.yml"
   },
   "private": true,
