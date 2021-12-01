@@ -14,4 +14,4 @@ workflows:
           requires:
             - Install dependencies
           parallelism: 4 # use 4 CircleCI machines to finish quickly
-          command: CI_BUILD_ID="testing-commit-${CIRCLE_SHA1}"" npm run cy:run
+          command: CI_BUILD_ID=testing-commit-${CIRCLE_SHA1} npm run cy:run
