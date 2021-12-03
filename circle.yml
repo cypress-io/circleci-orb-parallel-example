@@ -13,5 +13,11 @@ workflows:
           name: Run tests
           requires:
             - Install dependencies
+          record: true # record results on Cypress Dashboard
+          parallel: true # split all specs across machines
           parallelism: 4 # use 4 CircleCI machines to finish quickly
-          command: CI_BUILD_ID=testing-commit-${CIRCLE_SHA1} npm run cy:run
+          group: 'all tests' # name this group "all tests" on the dashboard
+          # typically you want Cypress to determine the build ID
+          # that ties all parallel test jobs together
+          # or you can pass your own ID using environment variables
+          ci-build-id: 'testing-commit-${CIRCLE_SHA1}'
