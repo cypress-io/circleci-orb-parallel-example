@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/cypress-io/circleci-orb-parallel-example#readme",
   "devDependencies": {
-    "cypress": "9.1.0"
+    "cypress": "https://cdn.cypress.io/beta/npm/9.0.1/circle-develop-002fbdda600aa83fce90dfa2d687bbf8aae6aa87/cypress.tgz"
   }
 }
